@@ -91,7 +91,3 @@ module.exports = {
 };
 
 
-/*
-Using MetaMask to send 0.5 HT to 0x164Bb112B4b7500C08D7C78B2e1eFf70b1361Ed4
-https://testnet.hecoinfo.com/tx/0x56740a29bdb69de51869ff438d5132e235d18862750ec1e30f03b5cfd40b9ab7
-*/
