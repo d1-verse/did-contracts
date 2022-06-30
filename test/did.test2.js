@@ -189,9 +189,9 @@ describe('DID System:', () => {
             ret = await NFT.balanceOf(verseOwner.address);
             expect(ret).equal(0);
 
-            [ret1, ret2] = await CResolver.getReverse(verseOwner.address);
-            expect(ret1).equal(ZERO_NODE);
-            expect(ret2).equal('');
+            // [ret1, ret2] = await CResolver.getReverse(verseOwner.address);
+            // expect(ret1).equal(ZERO_NODE);
+            // expect(ret2).equal('');
 
             [ret1, ret2] = await CResolver.getReverse(fooAcc.address);
             expect(ret1).equal(VERSE_NODE);
@@ -357,7 +357,7 @@ describe('DID System:', () => {
             expect(owner).equal(fooAcc.address);
 
             await new Promise(resolve => setTimeout(resolve, 5000));
-            timestamp = Math.floor(Date.now() / 1000); // 秒
+            timestamp = Math.floor(Date.now() / 1000);
 
             try {
                 register = await VR.register(
@@ -405,25 +405,25 @@ describe('DID System:', () => {
         });
 
         it("Locked verse node to transfer，should failed", async () => {
-           const isLocked = await DB.nodeLock(VERSE_NODE);
-           expect(isLocked).equal(true);
+            const isLocked = await DB.nodeLock(VERSE_NODE);
+            expect(isLocked).equal(true);
 
-           let owner = await NFT.ownerOf(VERSE_NODE);
-           expect(owner).equal(deployerAsDao.address);
+            let owner = await NFT.ownerOf(VERSE_NODE);
+            expect(owner).equal(deployerAsDao.address);
 
-           try {
-               const transferFrom = await NFT.connect(deployerAsDao).transferFrom(
-                   deployerAsDao.address,
-                   fooAcc.address,
-                   VERSE_NODE
-               );
-               transferFrom.wait();
-           } catch (e) {
-               console.log("\n\033[0;31m%s\033[0m", e);
-           }
+            try {
+                const transferFrom = await NFT.connect(deployerAsDao).transferFrom(
+                    deployerAsDao.address,
+                    fooAcc.address,
+                    VERSE_NODE
+                );
+                transferFrom.wait();
+            } catch (e) {
+                console.log("\n\033[0;31m%s\033[0m", e);
+            }
 
-           owner = await NFT.ownerOf(VERSE_NODE);
-           expect(owner).equal(deployerAsDao.address);
+            owner = await NFT.ownerOf(VERSE_NODE);
+            expect(owner).equal(deployerAsDao.address);
         });
 
         it("Unlocked verse node to transfer，should success", async () => {
@@ -450,6 +450,102 @@ describe('DID System:', () => {
 
             owner = await NFT.ownerOf(VERSE_NODE)
             expect(owner).equal(fooAcc.address);
+        });
+
+
+        it('Create node foobar.verse', async () => {
+            let isNodeExisted = await DB.isNodeExisted("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(isNodeExisted).equal(true);
+
+            let isNodeActive = await DB.isNodeActive("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(isNodeActive).equal(false);
+
+            // node 存在但已经过期
+            let [mainAddr, timeStamp] = await CResolver.getMainAddressWithTimestamp("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(mainAddr).equal(barAcc.address);
+
+            let balance = await NFT.balanceOf(fooAcc.address);
+            expect(balance).equal(1);
+
+            let owner = await NFT.ownerOf("0xc14d68eb0d0a4df33c3656bc9e67e9cd0af9811668568c61c0c7e98ac830bdfa");
+            expect(owner).equal(fooAcc.address);
+
+            let totalSupply = await NFT.totalSupply();
+            expect(totalSupply).equal(2);
+
+            const register = await VR.register(
+                otherAcc.address,
+                300,
+                "foobar",
+                "0x01"
+            );
+            register.wait();
+
+            balance = await NFT.balanceOf(otherAcc.address);
+            expect(balance).equal(1);
+
+            owner = await NFT.ownerOf("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(owner).equal(otherAcc.address);
+
+            totalSupply = await NFT.totalSupply();
+            expect(totalSupply).equal(2); // node 存在，执行收回并转移给新的owner，因此 totalSupply总量 保持不变
+
+            [mainAddr, timeStamp] = await CResolver.getMainAddressWithTimestamp("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(mainAddr).equal(otherAcc.address);
+            console.log("timeStamp", timeStamp);
+            // console.log("block.timeStamp", Math.round(new Date()/1000));
+
+        });
+
+        it('getReverse', async () => {
+            const [node, name] = await CResolver.getReverse(otherAcc.address);
+            expect(node).equal("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(name).equal("foobar.verse");
+        });
+
+        it('setReverse should failed', async () => {
+            const isNodeExisted = await DB.isNodeExisted("0xe7cdf4bd550f394618b4dfd12ccf68a8b7c5f83d93e958f16496b53ea22389b4");
+            expect(isNodeExisted).equal(false);
+
+            try {
+                let setReverse = await DB.connect(deployerAsDao).setReverse(otherAcc.address, "0xe7cdf4bd550f394618b4dfd12ccf68a8b7c5f83d93e958f16496b53ea22389b4");
+                setReverse.wait();
+            }catch (e) {
+                console.log("\n\033[0;31m%s\033[0m", e);
+            }
+        });
+
+
+        // function registerWithWeb2(
+        //     address owner,
+        //     uint64 ttl,
+        //     uint256 web2_type,
+        //     string memory web2_name,
+        //     string memory name,
+        //     bytes memory signature
+        it('registerWithWeb2', async () => {
+            const registerWithWeb2 = await VR.registerWithWeb2(
+                barAcc.address,
+                300,
+                1000,
+                "myTwitter",
+                "foobar",
+                "0x00"
+            );
+            registerWithWeb2.wait();
+
+            const [node, name] = await CResolver.getReverse(barAcc.address);
+            const balance = await NFT.balanceOf(barAcc.address);
+            const twitter = await CResolver.getTwitter(
+                "0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a",
+                // ethers.utils.hexZeroPad(ethers.utils.hexlify(1000), 32)
+            );
+
+            expect(node).equal("0x02532798adbc24b7463d2984f38e9caa99661be4b772fbbaa15842d1a52ebf0a");
+            expect(name).equal("foobar.verse");
+            expect(balance).equal(1);
+            expect(twitter).equal("myTwitter");
+
         });
 
         //
