@@ -55,15 +55,16 @@ contract CoreRegistrar is KVStorage {
 
     function setWeb2(bytes32 node, uint256 web2_type, bytes memory web2_info) external onlyTldRegistrar {
         require(web2_type == KEY_TWITTER || web2_type == KEY_INSTAGRAM, "This web2 type is not supported");
-        address main_address = getMainAddress(node);
-        _coreDB.setOwnerItem(main_address, encodeItemKey(node, web2_type), web2_info);
-        emit NodeOwnerItemChangedWithValue(node, main_address, bytes32(web2_type), web2_info);
+        // address main_address = getMainAddress(node);
+        address owner = _coreDB.getNodeOwner(node);
+        _coreDB.setOwnerItem(owner, encodeItemKey(node, web2_type), web2_info);
+        emit NodeOwnerItemChangedWithValue(node, owner, bytes32(web2_type), web2_info);
     }
 
-    function setWeb3(address main_address, uint256 web3_type, bytes memory we3_info) external onlyTldRegistrar {
+    function setWeb3(address main_address_or_owner, uint256 web3_type, bytes memory we3_info) external onlyTldRegistrar {
         require(web3_type == KEY_KEY_VOICE_SCORE, "This web3 type is not supported");
-        _coreDB.setOwnerItem(main_address, encodeItemKey(bytes32(0), web3_type), we3_info);
-        emit NodeOwnerItemChangedWithValue(bytes32(0), main_address, bytes32(web3_type), we3_info);
+        _coreDB.setOwnerItem(main_address_or_owner, encodeItemKey(bytes32(0), web3_type), we3_info);
+        emit NodeOwnerItemChangedWithValue(bytes32(0), main_address_or_owner, bytes32(web3_type), we3_info);
     }
 
     function setTTL(bytes32 node, uint64 ttl) external onlyTeamMemberAndActive(node) {

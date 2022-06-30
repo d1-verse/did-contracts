@@ -11,7 +11,8 @@ import "./Common/KeyDefinition.sol";
 interface IResolver {
     function getKeyVoiceScore(address main_address) external view returns (uint256);
     function getNodeName(bytes32 node) external view returns (string memory);
-    function getMainAddress(bytes32 node) external view returns (address);
+    // function getMainAddress(bytes32 node) external view returns (address);
+    function getNodeOwner(bytes32 node) external view returns (address);
 }
 
 interface IRegistrar {
@@ -66,12 +67,12 @@ contract VerseRegistrar is KeyDefinition {
     }
 
     function setTwitter(bytes32 node, string memory twitter_name, bytes memory signature) external {
-        verify_name_signature(IResolver(_coreDB.coreResolver()).getMainAddress(node), "", twitter_name, KEY_TWITTER, signature);
+        verify_name_signature(IResolver(_coreDB.coreResolver()).getNodeOwner(node), "", twitter_name, KEY_TWITTER, signature);
         IRegistrar(_coreDB.coreRegistrar()).setWeb2(node, KEY_TWITTER, abi.encode(twitter_name));
     }
 
     function setInstagram(bytes32 node, string memory instagram_name, bytes memory signature) external {
-        verify_name_signature(IResolver(_coreDB.coreResolver()).getMainAddress(node), "", instagram_name, KEY_INSTAGRAM, signature);
+        verify_name_signature(IResolver(_coreDB.coreResolver()).getNodeOwner(node), "", instagram_name, KEY_INSTAGRAM, signature);
         IRegistrar(_coreDB.coreRegistrar()).setWeb2(node, KEY_INSTAGRAM, abi.encode(instagram_name));
     }
 

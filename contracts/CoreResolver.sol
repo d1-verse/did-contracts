@@ -48,17 +48,19 @@ contract CoreResolver is KVStorage {
     }
 
     function getTwitter(bytes32 node) external view returns (string memory) {
-        address main_address = getMainAddress(node);
-        return abiBytesToString(_coreDB.getOwnerItem(main_address, encodeItemKey(node, KEY_TWITTER)));
+        // address main_address = getMainAddress(node);
+        address owner = _coreDB.getNodeOwner(node);
+        return abiBytesToString(_coreDB.getOwnerItem(owner, encodeItemKey(node, KEY_TWITTER)));
     }
 
     function getInstagram(bytes32 node) external view returns (string memory) {
-        address main_address = getMainAddress(node);
-        return abiBytesToString(_coreDB.getOwnerItem(main_address, encodeItemKey(node, KEY_INSTAGRAM)));
+        // address main_address = getMainAddress(node);
+        address owner = _coreDB.getNodeOwner(node);
+        return abiBytesToString(_coreDB.getOwnerItem(owner, encodeItemKey(node, KEY_INSTAGRAM)));
     }
 
-    function getKeyVoiceScore(address main_address) external view returns (uint256) {
-        return abiBytesToUint256(_coreDB.getOwnerItem(main_address, encodeItemKey(bytes32(0), KEY_KEY_VOICE_SCORE)));
+    function getKeyVoiceScore(address main_address_or_owner) external view returns (uint256) {
+        return abiBytesToUint256(_coreDB.getOwnerItem(main_address_or_owner, encodeItemKey(bytes32(0), KEY_KEY_VOICE_SCORE)));
     }
 
     function getNftMetadataURI(bytes32 node) external view returns (string memory) {
