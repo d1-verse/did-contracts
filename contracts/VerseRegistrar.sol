@@ -9,7 +9,7 @@ import "./Common/LibSignature.sol";
 import "./Common/KeyDefinition.sol";
 
 interface IResolver {
-    function getKeyVoiceScore(address main_address) external view returns (uint256);
+    function getKeyVoiceScore(address main_address_or_owner) external view returns (uint256);
     function getNodeName(bytes32 node) external view returns (string memory);
     // function getMainAddress(bytes32 node) external view returns (address);
     function getNodeOwner(bytes32 node) external view returns (address);
