@@ -32,7 +32,7 @@ module.exports = {
     },
     hardhat: {
     },
-    testnet: {
+    heco_test: {
       url: "https://http-testnet.hecochain.com",
       chainId: 256,
       gas: 3000000,
@@ -40,12 +40,27 @@ module.exports = {
       // accounts: {mnemonic: mnemonic}
       accounts: [privateKey]
     },
-    mainnet: {
+    heco_main: {
       url: "https://http-mainnet.hecochain.com",
       chainId: 128,
       gas: 3000000,
       gasPrice: 20000000000,
       accounts: {mnemonic: mnemonic}
+    },
+    cube_test: {
+      url: "https://http-testnet.cube.network",
+      // url: "https://http-testnet-archive.cube.network",
+      // url: "https://http-testnet-sg.cube.network",
+      // url: "https://http-testnet-jp.cube.network",
+      // url: "https://http-testnet-us.cube.network",
+      // url: "http://defi-node.huobiapps.com/cube_intertx_rpc",
+      chainId: 1819,
+      gas: 3000000,
+      // gasPrice: "auto",
+      gasPrice: 5000_000_000, // 5 gwei,
+      // accounts: {mnemonic: mnemonic},
+      accounts: [privateKey],
+      timeout: 20000000
     },
   },
   solidity: {
