@@ -77,6 +77,10 @@ contract CoreResolver is KVStorage {
         return abiBytesToAddressWithoutTimestamp(_coreDB.getNodeItem(node, bytes32(KEY_RESOLVER)));
     }
 
+    function getResolverWithTimestamp(bytes32 node) public view returns (address) {
+        return abiBytesToAddressWithTimestamp(_coreDB.getNodeItem(node, bytes32(KEY_RESOLVER)));
+    }
+
     function getRegistrarWithTimestamp(bytes32 node) public view returns (address, uint64) {
         return abiBytesToAddressWithTimestamp(_coreDB.getNodeItem(node, bytes32(KEY_REGISTRAR)));
     }

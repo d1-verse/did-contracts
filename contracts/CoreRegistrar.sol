@@ -170,6 +170,7 @@ contract CoreRegistrar is KVStorage {
         if (addr == address(0)) {
             _coreDB.deleteOwnerItem(owner, encoded_item_key);
         } else {
+            // Address with Timestamp: |Address(160bit)|Null(32bit)|Timestamp(64bit)|
             encoded_item_value = abi.encode((uint256(uint160(addr)) << 96) + uint64(block.timestamp));
             _coreDB.setOwnerItem(owner, encoded_item_key, encoded_item_value);
         }
@@ -204,7 +205,7 @@ contract CoreRegistrar is KVStorage {
         }
 
         bytes32 node = encodeNameToNode(parent, name);
-        require(node != parent, "Node is same as parent");
+        // require(node != parent, "Node is same as parent"); // useless
 
         address nft = _coreDB.coreNFT();
         if (!_coreDB.isNodeExisted(node)) {

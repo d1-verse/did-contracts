@@ -41,7 +41,8 @@ abstract contract KeyDefinition is APP { // KVS: Key Value Storage
     uint256 constant internal KEY_ADDRESS_HECO = (ETHEREUM_LIKE_ADDRESS_BEGIN + 3); // for Heco
     uint256 internal ETHEREUM_LIKE_ADDRESS_END = (ETHEREUM_LIKE_ADDRESS_BEGIN + 3);
 
-    function setEthLikeAddressCount(uint256 count) external onlyOperator {
-        ETHEREUM_LIKE_ADDRESS_END = ETHEREUM_LIKE_ADDRESS_BEGIN + count;
+    function setEthLikeAddressEnd(uint256 end) external onlyOperator {
+        require(end > ETHEREUM_LIKE_ADDRESS_END, "Append only");
+        ETHEREUM_LIKE_ADDRESS_END = end;
     }
 }
