@@ -62,6 +62,18 @@ module.exports = {
       accounts: [privateKey],
       timeout: 20000000
     },
+    cube_main: {
+      // url: "https://http-mainnet.cube.network",
+      // url: "https://http-mainnet-sg.cube.network",
+      url: "https://http-mainnet-us.cube.network",
+      chainId: 1818,
+      gas: 3000000,
+      // gasPrice: "auto",
+      gasPrice: 300_000_000_000, // 300 gwei,
+      // accounts: {mnemonic: mnemonic},
+      accounts: [privateKey],
+      timeout: 20000000
+    },
   },
   solidity: {
     compilers: [

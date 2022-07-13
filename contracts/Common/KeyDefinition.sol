@@ -13,9 +13,6 @@ abstract contract KeyDefinition is APP { // KVS: Key Value Storage
     // node: keccak256(abi.encodePacked(parent, name_hash));
     // parent: parent node;
 
-    // KEY_META 所对应的 Value，当前没用到，但以后可以做一定的设计，比如：前16个Bit对应官方保留字段，当前最高使用的Key值，
-    // 后16个Bit，对应用户自定义字段，当前最高使用的值，以65536为基底；之后可以设置Bloom过滤器或Bitmap之类的数据。
-
     uint256 constant internal KEY_META = 20;
     uint256 constant internal KEY_NAME = 21;
     uint256 constant internal KEY_TTL = 22;

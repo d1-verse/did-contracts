@@ -28,7 +28,7 @@ async function main() {
 
     let CoreDB = await ethers.getContractFactory('CoreDB');
     console.log('Deploying CoreDB...');
-    let DB = await CoreDB.deploy("0xb694FD4369516E2d1b1D9a46653D539b805fE8C2");
+    let DB = await CoreDB.deploy("0xe0d2F3AfDB8058615bE5f7D77D2ce1536e965Db5");
     await DB.deployed();
     console.log('CoreDB deployed to:', DB.address);
 
@@ -46,7 +46,7 @@ async function main() {
 
     let CoreNFT = await ethers.getContractFactory('CoreNFT');
     console.log('Deploying CoreNFT...');
-    let NFT = await CoreNFT.deploy(DB.address, "D1verse DID NFT", "D1DNFT", "https://static.schoolbuy.top/media/ula/");
+    let NFT = await CoreNFT.deploy(DB.address, "d1verse DID", "d1verse DID", "https://www.d1verse.io/did/cube/");
     await NFT.deployed();
     console.log('CoreNFT deployed to:', NFT.address);
 
@@ -74,7 +74,7 @@ async function main() {
     console.log('CoreRegistrar.registerSubnode');
     await CRegistrar.registerSubnode(
         "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-        "0xb694FD4369516E2d1b1D9a46653D539b805fE8C2",
+        "0xe0d2F3AfDB8058615bE5f7D77D2ce1536e965Db5",
         1954177710,
         300,
         "0x0000000000000000000000000000000000000000",

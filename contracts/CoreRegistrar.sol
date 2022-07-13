@@ -105,9 +105,9 @@ contract CoreRegistrar is KVStorage {
         // if (_coreDB.getReverse(main_address) == bytes32(0)) {
         //    _coreDB.setReverse(main_address, node);
         // }
-        // TODO 更严格的权限检查：若需支持以上反向解析设置语句，必须提供main_address的签名，以免随意设置他人的地址作为解析地址
+        // to support "setReverse" sentence above, need stricter check: require main_address's signature, to avoid set orther users' address
         // function setMainAddress(bytes32 node, address main_address, bytes memory signautre_of_main_address) public onlyTeamMemberAndActive(node) {...}
-        // 否则，需要分两步执行。第一步：setMainAddress，第二步：setReverse
+        // 1) setMainAddress; 2) setReverse
     }
 
     function setReverse(bytes32 node) external {
