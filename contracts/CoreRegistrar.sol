@@ -182,8 +182,8 @@ contract CoreRegistrar is KVStorage {
         return _coreDB.getNodeExpire(parent) >= expire && expire > block.timestamp;
     }
 
-    // Alice -> UI.setSubnodeRecord -> CoreDB.createNodeRecord -> NFT.afterMint
-    // Bob -> Alice.Registrar -> UI.registerSubnode -> CoreDB.createNodeRecord -> NFT.afterMint
+    // Alice -> CoreRegistrar.setSubnodeRecord -> CoreDB.createNodeRecord -> NFT.afterMint
+    // Bob -> Alice.Registrar -> CoreRegistrar.registerSubnode -> CoreDB.createNodeRecord -> NFT.afterMint
     function registerSubnode(
         bytes32 parent,
         address owner,

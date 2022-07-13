@@ -69,7 +69,6 @@ contract CoreNFT is IERC721Metadata, APP {
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
     }
 
-    // 若节点处于过期待回收状态，ownerOf 仍可正常返回其 owner，但 owner 执行转账会失败
     function ownerOf(uint256 tokenId) public view returns (address) {
         address owner = _coreDB.getNodeOwner(bytes32(tokenId));
         require(owner != address(0), "ERC721: owner query for nonexistent token");
@@ -155,7 +154,6 @@ contract CoreNFT is IERC721Metadata, APP {
         _safeTransfer(from, to, tokenId, _data);
     }
 
-    // TODO 思考可重入攻击
     function reclaimNFT(address from, address to, uint256 tokenId, bytes memory _data) external {
         require(_msgSender() == _coreDB.coreRegistrar(), "ERC721: caller is not Core UI");
         _safeTransfer(from, to, tokenId, _data);
@@ -195,7 +193,6 @@ contract CoreNFT is IERC721Metadata, APP {
         emit Transfer(owner, address(0), tokenId);
     }
 
-    // TODO Attack 风险 ??? callee 反过来调用 caller 会怎么样 ???
     function _checkOnERC721Received(
         address from,
         address to,

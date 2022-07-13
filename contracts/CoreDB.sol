@@ -8,10 +8,6 @@ import "./Common/APP.sol";
 
 contract CoreDB is ICoreDB, APP {
 
-    // 某个Node专有的属性（比如：Name）
-    // 某个Owner为其当前所拥有的某个Node设置的属性（比如：主解析地址、Twitter）
-    // 某个地址自己的属性（比如：KVS、反向解析记录）
-
     mapping(address => mapping(bytes32 => bytes)) public ownerRecord;
     mapping(bytes32 => Node) public nodeRecord;
     mapping(address => bytes32) public reverseRecord;
