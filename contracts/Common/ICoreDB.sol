@@ -91,6 +91,8 @@ interface ICoreDB {
 
     function rootNode() external view returns (bytes32);
 
+    function checkNode(bytes32 node) external view returns (bool);
+
 }
 
 

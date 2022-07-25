@@ -31,6 +31,22 @@ contract CoreRegistrar is KVStorage {
 
     mapping(address => bool) public tldRegistrars; // Top Level Domain Registrars
 
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+    uint256 private _status;
+
+    modifier nonReentrant() {
+        // On the first call to nonReentrant, _notEntered will be true
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+        // Any calls to nonReentrant after this point will fail
+        _status = _ENTERED;
+
+        _;
+
+        // By storing the original value once again, a refund is triggered (see https://eips.ethereum.org/EIPS/eip-2200)
+        _status = _NOT_ENTERED;
+    }
+
     constructor(address core_db) {
         initApp(core_db, true);
     }
@@ -193,9 +209,9 @@ contract CoreRegistrar is KVStorage {
         uint256 cost,
         string memory name,
         bytes memory _data
-    ) external onlyTeamMemberAndActive(parent) returns (bytes32) {
+    ) external nonReentrant() onlyTeamMemberAndActive(parent) returns (bytes32) {
 
-        require(_coreDB.isNodeActive(parent), "Parent Node is not available");
+        require(_coreDB.checkNode(parent), "Parent Node is not available");
         require(owner != address(0) , "Owner is address(0)");
         require(isExpireValid(parent, expire), "Expire is wrong compared to parent's expire");
 
@@ -209,15 +225,15 @@ contract CoreRegistrar is KVStorage {
 
         address nft = _coreDB.coreNFT();
         if (!_coreDB.isNodeExisted(node)) {
-            _coreDB.createNode(parent, node, owner, 0, false); // (expire = 0) and onlyTeamMemberAndActive(node), can avoid reentrancy
+            _coreDB.createNode(parent, node, owner, expire, false);
             ICoreNFT(nft).afterMint(owner, uint256(node), _data); // _resetNode(node, owner);
         } else if (!_coreDB.isNodeActive(node)) {
             ICoreNFT(nft).reclaimNFT(_coreDB.getNodeOwner(node), owner, uint256(node), _data);
+            _coreDB.setNodeExpire(node, expire);
         } else {
             revert("The node is active");
         }
 
-        _coreDB.setNodeExpire(node, expire);
         _coreDB.setNodeItem(node, bytes32(KEY_TTL), abi.encode(ttl));
         _coreDB.setNodeItem(node, bytes32(KEY_NAME), abi.encode(name));
 
@@ -241,6 +257,6 @@ contract CoreRegistrar is KVStorage {
 // ICoreNFT(nft).beforeMint(owner, uint256(node)); // need not to call beforeMint
 // emit NodeItemChangedWithValue(node, owner, bytes32(KEY_TTL), abi.encode(ttl));
 // emit NodeItemChangedWithValue(node, owner, bytes32(KEY_NAME), abi.encode(name));
-// NFT合约中的transfer会要求节点未过期才能执行转移（防诈骗），但若Msg.sender == CoreUI，则允许转移
+// NFT transfer require DID(Node) not expired for normal case to avoid some fraud; but allow transferring if Msg.sender == CoreUI
 
 

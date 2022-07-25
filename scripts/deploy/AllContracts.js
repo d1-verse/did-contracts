@@ -46,7 +46,7 @@ async function main() {
 
     let CoreNFT = await ethers.getContractFactory('CoreNFT');
     console.log('Deploying CoreNFT...');
-    let NFT = await CoreNFT.deploy(DB.address, "d1verse DID", "d1verse DID", "https://www.d1verse.io/did/cube/");
+    let NFT = await CoreNFT.deploy(DB.address, "d1verse DID", "d1verse DID", "https://www.d1verse.io/did-metadata/cube/");
     await NFT.deployed();
     console.log('CoreNFT deployed to:', NFT.address);
 

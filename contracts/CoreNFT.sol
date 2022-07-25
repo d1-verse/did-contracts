@@ -185,13 +185,13 @@ contract CoreNFT is IERC721Metadata, APP {
         require(_checkOnERC721Received(address(0), to, tokenId, _data), "ERC721: mint to non ERC721Receiver implementer");
     }
 
-    function burn(uint256 tokenId) public {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: burn caller is not owner nor approved");
-        address owner = ownerOf(tokenId);
-        _approve(address(0), tokenId); // Clear approvals
-        _coreDB.clearNode(bytes32(tokenId));
-        emit Transfer(owner, address(0), tokenId);
-    }
+//    function burn(uint256 tokenId) public {
+//        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC721: burn caller is not owner nor approved");
+//        address owner = ownerOf(tokenId);
+//        _approve(address(0), tokenId); // Clear approvals
+//        _coreDB.clearNode(bytes32(tokenId));
+//        emit Transfer(owner, address(0), tokenId);
+//    }
 
     function _checkOnERC721Received(
         address from,
