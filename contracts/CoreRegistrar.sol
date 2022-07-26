@@ -104,11 +104,11 @@ contract CoreRegistrar is KVStorage {
 
     // Registrar or Resolver is node-item, not owner-item
     function setRegistrar(bytes32 node, address registrar) external onlyTeamMemberAndActive(node) {
-        _setNodeItem(node, bytes32(KEY_REGISTRAR), abi.encode((uint256(uint160(registrar)) << 96) + uint64(block.timestamp)));
         if (_coreDB.getNodeParent(node) == _coreDB.rootNode()) { // Only record Top Level Domain Registrar
             delete tldRegistrars[getRegistrar(node)];
             tldRegistrars[registrar] = true;
         }
+        _setNodeItem(node, bytes32(KEY_REGISTRAR), abi.encode((uint256(uint160(registrar)) << 96) + uint64(block.timestamp)));
     }
 
     // Registrar or Resolver is node-item, not owner-item
