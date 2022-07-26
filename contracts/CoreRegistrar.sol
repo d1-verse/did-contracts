@@ -22,14 +22,15 @@ interface ISensitiveWords {
 contract CoreRegistrar is KVStorage {
 
     event NodeCreatedOrReclaimed(bytes32 indexed parent, bytes32 indexed node, address indexed owner, uint64 expire, uint64 ttl, address payment, uint256 cost, string name);
-    event NodeItemChanged(bytes32 indexed node, address indexed owner, bytes32 indexed key);
+    // event NodeItemChanged(bytes32 indexed node, address indexed owner, bytes32 indexed key);
     event NodeItemChangedWithValue(bytes32 indexed node, address indexed owner, bytes32 indexed key, bytes value);
-    event NodeOwnerItemChanged(bytes32 indexed node, address indexed owner, bytes32 indexed key);
+    // event NodeOwnerItemChanged(bytes32 indexed node, address indexed owner, bytes32 indexed key);
     event NodeOwnerItemChangedWithValue(bytes32 indexed node, address indexed owner, bytes32 indexed key, bytes value);
     event NodeExpireUpdated(bytes32 indexed node, address indexed owner, uint64 expire);
     event ReverseRecordSet(address indexed main_address, bytes32 indexed node); // node == bytes32(0), means ReverseRecordDeleted
 
     mapping(address => bool) public tldRegistrars; // Top Level Domain Registrars
+    bool public openForAll;
 
     uint256 private constant _NOT_ENTERED = 1;
     uint256 private constant _ENTERED = 2;
@@ -49,6 +50,7 @@ contract CoreRegistrar is KVStorage {
 
     constructor(address core_db) {
         initApp(core_db, true);
+        openForAll = true;
     }
 
     // Require msg.sender is a TeamMember (Owner, Manager, Main_Address, Registrar_Contract)
@@ -60,13 +62,17 @@ contract CoreRegistrar is KVStorage {
             msg.sender == getManager(node),
             "Caller is not a team member"
         );
-        require (_coreDB.isNodeValid(node), "Node is not active (expired) or locked");
+        require (_coreDB.isNodeValid(node), "Node is invalid");
         _;
     }
 
     modifier onlyTldRegistrar() {
-        require(tldRegistrars[msg.sender], "The caller should be verse-registrar");
+        require(tldRegistrars[msg.sender], "The caller is not verse-registrar");
         _;
+    }
+
+    function setOpenForAll(bool flag) external onlyOperator {
+        openForAll = flag;
     }
 
     function setWeb2(bytes32 node, uint256 web2_type, bytes memory web2_info) external onlyTldRegistrar {
@@ -210,10 +216,10 @@ contract CoreRegistrar is KVStorage {
         string memory name,
         bytes memory _data
     ) external nonReentrant() onlyTeamMemberAndActive(parent) returns (bytes32) {
-
-        require(_coreDB.checkNode(parent), "Parent Node is not available");
+        // require(_coreDB.checkNode(parent), "Parent Node is not available");
+        require(openForAll || tldRegistrars[msg.sender], "The caller is not verse-registrar");
         require(owner != address(0) , "Owner is address(0)");
-        require(isExpireValid(parent, expire), "Expire is wrong compared to parent's expire");
+        require(isExpireValid(parent, expire), "Expire is invalid");
 
         address core_sw = _coreDB.coreSW();
         if (core_sw != address(0)) {
@@ -245,8 +251,8 @@ contract CoreRegistrar is KVStorage {
 
     function renewExpire(bytes32 node, uint64 new_expire) external {
         bytes32 parent = _coreDB.getNodeParent(node);
-        require(msg.sender == getRegistrar(parent), "Caller should be the registrar of the parent node");
-        require(isExpireValid(parent, new_expire), "Expire is wrong compared to parent's expire");
+        require(msg.sender == getRegistrar(parent), "Caller is not the registrar of the parent node");
+        require(isExpireValid(parent, new_expire), "Expire is invalid");
         _coreDB.setNodeExpire(node, new_expire);
     }
 
