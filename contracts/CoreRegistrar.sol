@@ -249,13 +249,13 @@ contract CoreRegistrar is KVStorage {
 
     }
 
-    function renewExpire(bytes32 node, uint64 new_expire) external {
-        bytes32 parent = _coreDB.getNodeParent(node);
-        require(msg.sender == getRegistrar(parent), "Caller is not the registrar of the parent node");
-        require(isExpireValid(parent, new_expire), "Expire is invalid");
-        _coreDB.setNodeExpire(node, new_expire);
-        emit NodeExpireUpdated(node, _coreDB.getNodeOwner(node), new_expire);
-    }
+//    function renewExpire(bytes32 node, uint64 new_expire) external {
+//        bytes32 parent = _coreDB.getNodeParent(node);
+//        require(msg.sender == getRegistrar(parent), "Caller is not the registrar of the parent node");
+//        require(isExpireValid(parent, new_expire), "Expire is invalid");
+//        _coreDB.setNodeExpire(node, new_expire);
+//        emit NodeExpireUpdated(node, _coreDB.getNodeOwner(node), new_expire);
+//    }
 
 
 }

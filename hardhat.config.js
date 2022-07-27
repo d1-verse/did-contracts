@@ -69,7 +69,7 @@ module.exports = {
       chainId: 1818,
       gas: 3000000,
       // gasPrice: "auto",
-      gasPrice: 300_000_000_000, // 300 gwei,
+      gasPrice: 220_000_000_000, // 220 gwei,
       // accounts: {mnemonic: mnemonic},
       accounts: [privateKey],
       timeout: 20000000
@@ -89,7 +89,7 @@ module.exports = {
         version: "0.8.9",
         settings: {
           optimizer: {
-            enabled: true
+            enabled: false
           }
         }
       }

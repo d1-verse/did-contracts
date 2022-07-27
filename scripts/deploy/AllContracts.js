@@ -75,7 +75,7 @@ async function main() {
     await CRegistrar.registerSubnode(
         "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
         "0xe0d2F3AfDB8058615bE5f7D77D2ce1536e965Db5",
-        1954177710,
+        3954177710,
         300,
         "0x0000000000000000000000000000000000000000",
         0,
